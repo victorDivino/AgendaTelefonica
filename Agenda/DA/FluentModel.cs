@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,55 +12,67 @@ namespace DA
     class FluentModel : OpenAccessContext
     {
         private static string connectionStringName = @"AgendaTelefonica";
-
-        private static BackendConfiguration backend =
-            GetBackendConfiguration();
-
-        private static MetadataSource metadataSource =
-            new FluentModelMetadataSource();
+        private static BackendConfiguration backend = GetBackendConfiguration();
+        private static MetadataSource metadataSource = new FluentModelMetadataSource();
 
         public FluentModel()
             : base(connectionStringName, backend, metadataSource)
         { }
 
-        public IQueryable<Contato> Contatos
+        public void ConsultarTodosContatos()
         {
-            get
-            {
-                return this.GetAll<Contato>();
-            }
+            var watch = new Stopwatch();
+            watch.Start();
+            var contatos = this.GetAll<Contato>().ToList();
+            watch.Stop();
         }
 
-        public IQueryable<Telefone> Telefones
+        public void AdicionarNovoContato()
         {
-            get
+            var watch = new Stopwatch();
+            watch.Start();
+            var contato = new Contato()
             {
-                return this.GetAll<Telefone>();
-            }
-        }
-
-
-        public void Adicionar()
-        {
-            this.Add(new Contato() {
                 Nome = "João",
-                Email = "joao@email.com"
+                Email = "joao@email.com",
+            };
+            this.Add(contato);
+            this.SaveChanges();
+            watch.Stop();
+        }
+
+        public void AdicionarTelefone()
+        {
+            var watch = new Stopwatch();
+            watch.Start();
+            var contato = this.GetAll<Contato>().Last();
+            contato.Telefones.Add(new Telefone()
+            {
+                DDD = "85",
+                Numero = "999999999"
             });
             this.SaveChanges();
-            this.Dispose();
+            watch.Stop();
         }
 
-
-
+        public void DeletarContato()
+        {
+            var watch = new Stopwatch();
+            watch.Start();
+            var contato = this.GetAll<Contato>().Last();
+            this.Delete(contato.Telefones);
+            this.Delete(contato);
+            this.SaveChanges();
+            watch.Stop();
+        }
 
         public static BackendConfiguration GetBackendConfiguration()
         {
             BackendConfiguration backend = new BackendConfiguration();
             backend.Backend = "MsSql";
             backend.ProviderName = "System.Data.SqlClient";
-
             return backend;
         }
     }
 }
- 
+

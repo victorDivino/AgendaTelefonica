@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Telerik.OpenAccess;
 using Telerik.OpenAccess.Metadata;
 using Telerik.OpenAccess.Metadata.Fluent;
 
@@ -18,6 +19,10 @@ namespace DA
                 Email = contato.Email
             }).ToTable("Contato");
             contatoMap.HasProperty(c => c.Id).IsIdentity(KeyGenerator.Autoinc);
+            contatoMap.HasAssociation(c => c.Telefones)
+                .HasConstraint((c, t) => t.IdContato == c.Id)
+                .IsManaged()
+                .WithDataAccessKind(DataAccessKind.ReadWrite);
 
             var telefoneMap = new MappingConfiguration<Telefone>();
             telefoneMap.MapType(telefone => new
@@ -30,11 +35,12 @@ namespace DA
             telefoneMap.HasProperty(c => c.Id).IsIdentity(KeyGenerator.Autoinc);
             telefoneMap.HasAssociation(t => t.Contato)
                 .WithOpposite(c => c.Telefones)
-                .HasConstraint((t, c) => t.IdContato == c.Id);
+                .HasConstraint((t, c) => t.IdContato == c.Id)
+                .IsManaged()
+                .WithDataAccessKind(DataAccessKind.ReadWrite);
 
             configurations.Add(contatoMap);
             configurations.Add(telefoneMap);
-
             return configurations;
         }
     }

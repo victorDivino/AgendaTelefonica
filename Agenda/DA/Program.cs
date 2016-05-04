@@ -10,10 +10,13 @@ namespace DA
     {
         static void Main(string[] args)
         {
-            var fluentModel = new FluentModel();
-            var contatos = fluentModel.Contatos.ToList();
-            //fluentModel.Adicionar();
-            //var telefones = fluentModel.Telefones.ToList();
+            using (var fluentModel = new FluentModel())
+            {
+                fluentModel.ConsultarTodosContatos();
+                fluentModel.AdicionarNovoContato();
+                fluentModel.AdicionarTelefone();
+                fluentModel.DeletarContato();
+            }
         }
     }
 }
