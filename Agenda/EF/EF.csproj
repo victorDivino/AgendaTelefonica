@@ -52,18 +52,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contato.cs" />
-    <Compile Include="ContatoMap.cs" />
-    <Compile Include="Contexto.cs" />
+    <Compile Include="Modelo\Contato.cs" />
+    <Compile Include="Map\ContatoMap.cs" />
+    <Compile Include="Infra\Contexto.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Telefone.cs" />
-    <Compile Include="TelefoneMap.cs" />
+    <Compile Include="Modelo\Telefone.cs" />
+    <Compile Include="Map\TelefoneMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

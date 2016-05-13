@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telerik.OpenAccess;
 using Telerik.OpenAccess.Metadata;
 
@@ -11,12 +7,11 @@ namespace DA
 {
     class FluentModel : OpenAccessContext
     {
-        private static string connectionStringName = @"AgendaTelefonica";
         private static BackendConfiguration backend = GetBackendConfiguration();
         private static MetadataSource metadataSource = new FluentModelMetadataSource();
 
         public FluentModel()
-            : base(connectionStringName, backend, metadataSource)
+            : base("AgendaTelefonica", backend, metadataSource)
         { }
 
         public void ConsultarTodosContatos()
