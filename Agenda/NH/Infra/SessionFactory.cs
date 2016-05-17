@@ -12,66 +12,69 @@ namespace NH
     {
         private ISessionFactory _sessionFactory;
         private ISession _session;
+        private int idContato;
 
         public SessionFactory()
         {
             _sessionFactory = Fluently.Configure()
                .Database(MsSqlConfiguration
                    .MsSql2012
-                   .ConnectionString(c => c.FromConnectionStringWithKey("AgendaTelefonica"))
-                   .ShowSql())
+                   .ConnectionString(c => c.FromConnectionStringWithKey("AgendaTelefonica")))
                .Mappings(x => x.FluentMappings.AddFromAssemblyOf<Program>())
                .BuildSessionFactory();
-
             _session = _sessionFactory.OpenSession();
         }
 
-        public void ConsultarTodosContatos()
+        public long ConsultarTodosContatos()
         {
             var watch = new Stopwatch();
             watch.Start();
             var contatos = _session.Query<Contato>().ToList();
             watch.Stop();
+            return watch.ElapsedMilliseconds;
         }
 
-        public void CadastrarNovoContato()
+        public long AdicionarNovoContato()
         {
             var watch = new Stopwatch();
             watch.Start();
             var contato = new Contato()
             {
-                Nome = "João",
-                Email = "joao@email.com",
+                Nome = "fulano",
+                Email = "fulano@email.com",
             };
             _session.Save(contato);
             _session.Flush();
-            watch.Stop();
+            idContato = contato.Id;
+            return watch.ElapsedMilliseconds;
         }
 
-        public void AdicionarTelefone()
+        public long AdicionarTelefone()
         {
             var watch = new Stopwatch();
             watch.Start();
-            var contato = _session.Query<Contato>().First();
+            var contato = _session.Query<Contato>().First(c => c.Id == idContato);
             contato.Telefones.Add(new Telefone()
             {
-                IdContato = contato.Id,
-                DDD = "85",
+                IdContato = idContato,
+                DDD = "99",
                 Numero = "999999999"
             });
             _session.SaveOrUpdate(contato);
             _session.Flush();
             watch.Stop();
+            return watch.ElapsedMilliseconds;
         }
 
-        public void DeletarContato()
+        public long DeletarContato()
         {
             var watch = new Stopwatch();
             watch.Start();
-            var contato = _session.Query<Contato>().First();
+            var contato = _session.Query<Contato>().First(c => c.Id == idContato);
             _session.Delete(contato);
             _session.Flush();
             watch.Stop();
+            return watch.ElapsedMilliseconds;
         }
         public void Dispose()
         {

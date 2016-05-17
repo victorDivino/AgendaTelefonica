@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
@@ -8,6 +9,8 @@ namespace EF
 {
     public class Contexto : DbContext
     {
+        private int idContato;
+
         public Contexto()
             : base("AgendaTelefonica")
         { }
@@ -22,15 +25,16 @@ namespace EF
             base.OnModelCreating(modelBuilder);
         }
 
-        public void ConsultarTodosContatos()
+        public long ConsultarTodosContatos()
         {
             var watch = new Stopwatch();
             watch.Start();
             var contatos = this.Contato.ToList();
             watch.Stop();
+            return watch.ElapsedMilliseconds;
         }
 
-        public void CadastrarNovoContato()
+        public long AdicionarNovoContato()
         {
             var watch = new Stopwatch();
             watch.Start();
@@ -42,31 +46,35 @@ namespace EF
             this.Contato.Add(contato);
             this.SaveChanges();
             watch.Stop();
+            idContato = contato.Id;
+            return watch.ElapsedMilliseconds;
         }
 
-        public void AdicionarTelefone()
+        public long AdicionarTelefone()
         {
             var watch = new Stopwatch();
             watch.Start();
-            var contato = this.Contato.First();
+            var contato = this.Contato.First(c => c.Id == idContato);
             contato.Telefones.Add(new Telefone()
             {
-                IdContato = contato.Id,
+                IdContato = idContato,
                 DDD = "85",
                 Numero = "999999999"
             });
             this.SaveChanges();
             watch.Stop();
+            return watch.ElapsedMilliseconds;
         }
 
-        public void DeletarContato()
+        public long DeletarContato()
         {
             var watch = new Stopwatch();
             watch.Start();
-            var contato = this.Contato.First();
+            var contato = this.Contato.First(c => c.Id == idContato);
             this.Contato.Remove(contato);
             this.SaveChanges();
             watch.Stop();
+            return watch.ElapsedMilliseconds;
         }
     }
 }
